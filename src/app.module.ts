@@ -1,26 +1,10 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminModule } from './admin/admin.module';
 import { GraphQLModule } from '@nestjs/graphql';
-import { Connection } from 'typeorm';
 import { FrontendModule } from './frontend/frontend.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'db.sqlite',
-      key: 'kaufmo',
-      synchronize: true,
-      migrationsRun: true,
-      entities: ["dist/**/*.model{.ts,.js}"],
-      migrations: ["dist/db/migrations/*{.ts,.js}"],
-      subscribers: ["dist/db/subscribers/*{.ts,.js}"],
-      cli: {
-        migrationsDir: "src/db/migrations",
-        subscribersDir: "src/db/subscribers",
-      },
-    }),
     GraphQLModule.forRootAsync({
       imports: [AdminModule],
       useFactory: () => ({
@@ -30,7 +14,7 @@ import { FrontendModule } from './frontend/frontend.module';
         playground: true,
         installSubscriptionHandlers: true,
         path: '/admin',
-      })
+      }),
     }),
     GraphQLModule.forRootAsync({
       imports: [FrontendModule],
@@ -41,10 +25,8 @@ import { FrontendModule } from './frontend/frontend.module';
         playground: true,
         installSubscriptionHandlers: true,
         path: '/frontend',
-      })
+      }),
     }),
   ],
 })
-export class AppModule {
-  constructor(private connection: Connection) {}
-}
+export class AppModule {}
